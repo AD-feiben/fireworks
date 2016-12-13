@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<style type="text/css">
+		body{
+			margin: 0;
+			padding: 0;
+			height: 690px;
+			background-color: #000;
+		}
+		.ball{
+			border-radius: 50%;
+			position: absolute;
+		}
+	</style>
+</head>
+
+<body>
+</body>
+<script type="text/javascript">
+	window.onload = function(){
+		var mouseX, mouseY;
+		var balls = [];				//用于存放结束时产生的小球对象
+		
+		var colors = ["#33B5E5", "#09C", "#A6C", "#93C", "#9C0", "#690", "#FB3", "#F80", "#F44", "#C00"];
+		var spans;		//声明 spans，用于保存每个小球元素
+		var ballTime;
+		
+		document.body.onclick = function(evenet){
+			event = event || window.event;
+			mouseX = evenet.offsetX;
+			mouseY = evenet.offsetY;
+			spans = document.getElementsByTagName("span");
+			if(ballTime){
+				insertBallsToDocument();
+			}else{
+				insertBallsToDocument();
+				ballTime = setInterval(updateBall,50);
+			}
+		}
+		
+		/*
+		 * 刷新小球的位置
+		 */
+		function updateBall(){
+			for (var i = 0; i < spans.length; i++) {
+				spans[i].style.left = parseInt(spans[i].style.left) + balls[i].vx + "px";
+				spans[i].style.top = parseInt(spans[i].style.top) + balls[i].vy + "px";
+				balls[i].vy += balls[i].g;
+				
+				if(parseInt(spans[i].style.top) >= 600){
+					spans[i].style.top = 600 + "px";
+					balls[i].vy = -0.4*balls[i].vy;
+					if(Math.abs(balls[i].vy) < 3){
+						balls[i].vy = 0;
+					}
+				}
+				//判断小球的位置，超出位置的话就删除小球
+				if(parseInt(spans[i].style.left) >= 1300 || parseInt(spans[i].style.left) < 10){
+					balls.splice(i,1);
+					spans[i].parentElement.removeChild(spans[i]);
+				}
+			}
+			//页面上不存在小球时，清定时器ballTime 以及 balls[]  
+			if(spans.length <= 0){
+				window.clearInterval(ballTime);
+				balls = [];
+				ballTime = "";
+			}
+		}
+		
+		/*
+		 * 生成100个小球,并在页面上显示
+		 */
+		function insertBallsToDocument(){
+			for(var i = 0; i < 100; i++){
+				var ball = new generateBallObj();
+				var left = ball.left,top = ball.top;
+				var span = document.createElement("span");
+				
+				span.setAttribute("style", "width:" + ball.width + "px; height:" + ball.height +
+								"px; background: " + ball.color + "; left: " + left + "px; top: " + top + "px;");
+				
+				span.className = "ball";
+				document.body.appendChild(span);
+			}
+		}
+		/*
+		 * 生成小球对象，并将小球对象存入balls[]
+		 * @Param	null
+		 * @Return	Object
+		 */
+		function generateBallObj(){
+			//随机生成小球的直径
+			var diameter = getIntegerRandom(5,12);
+			
+			//创建小球对象
+			var aBall={
+				width: diameter,
+				height: diameter,
+				left: mouseX - diameter/2,
+				top : mouseY - diameter,
+				vy: Math.pow(-1,getIntegerRandom(1000))*(Math.random()*20+2),
+				vx : Math.pow(-1,getIntegerRandom(1000))* (Math.random()*15 + 2) ,
+				g: Math.random() + 0.5,
+				color: colors[getIntegerRandom(colors.length)]
+			}
+			
+			balls.push(aBall);
+			return aBall;
+		}
+		/*
+		 * 生成随机整数
+		 * @Param	Number
+		 * 		传入两个参数		返回[m,n]的随机整数
+		 * 		传入一个参数		返回[0,m]的随机整数
+		 * @Return	Number
+		 */
+		function getIntegerRandom(m, n) {
+			if(n) {
+				return parseInt(Math.random() * (n - m) + m + 1);
+			} else {
+				return parseInt(Math.random() * m);
+			}
+		}
+	}
+	
+</script>
+
+</html>
