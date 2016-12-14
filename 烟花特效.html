@@ -10,6 +10,7 @@
 			padding: 0;
 			height: 690px;
 			background-color: #000;
+			cursor: pointer;
 		}
 		.ball{
 			border-radius: 50%;
@@ -23,7 +24,7 @@
 <script type="text/javascript">
 	window.onload = function(){
 		var mouseX, mouseY;
-		var balls = [];				//用于存放结束时产生的小球对象
+		var balls = [];				
 		
 		var colors = ["#33B5E5", "#09C", "#A6C", "#93C", "#9C0", "#690", "#FB3", "#F80", "#F44", "#C00"];
 		var spans;		//声明 spans，用于保存每个小球元素
@@ -51,15 +52,25 @@
 				spans[i].style.top = parseInt(spans[i].style.top) + balls[i].vy + "px";
 				balls[i].vy += balls[i].g;
 				
-				if(parseInt(spans[i].style.top) >= 600){
+				//反弹效果
+				/*if(parseInt(spans[i].style.top) >= 600){
 					spans[i].style.top = 600 + "px";
-					balls[i].vy = -0.4*balls[i].vy;
+					balls[i].vy = -0.3*balls[i].vy;
 					if(Math.abs(balls[i].vy) < 3){
 						balls[i].vy = 0;
 					}
-				}
+					if(balls[i].vx < 5 && balls[i].vx >= 0){
+//						balls[i].vx = Math.pow(-1,getIntegerRandom(1000)) * getIntegerRandom(15,30);
+						balls[i].vx = getIntegerRandom(5,10);
+					}
+					if(balls[i].vx < 5 && balls[i].vx < 0){
+						balls[i].vx = -getIntegerRandom(5,10);
+					}
+				}*/
+				
+				
 				//判断小球的位置，超出位置的话就删除小球
-				if(parseInt(spans[i].style.left) >= 1300 || parseInt(spans[i].style.left) < 10){
+				if(parseInt(spans[i].style.left) >= 1300 || parseInt(spans[i].style.left) < 10 || parseInt(spans[i].style.top) >= 600){
 					balls.splice(i,1);
 					spans[i].parentElement.removeChild(spans[i]);
 				}
@@ -76,7 +87,8 @@
 		 * 生成100个小球,并在页面上显示
 		 */
 		function insertBallsToDocument(){
-			for(var i = 0; i < 100; i++){
+			var num = getIntegerRandom(70,100);
+			for(var i = 0; i < num; i++){
 				var ball = new generateBallObj();
 				var left = ball.left,top = ball.top;
 				var span = document.createElement("span");
@@ -95,7 +107,7 @@
 		 */
 		function generateBallObj(){
 			//随机生成小球的直径
-			var diameter = getIntegerRandom(5,12);
+			var diameter = Math.random()*7+5;
 			
 			//创建小球对象
 			var aBall={
@@ -103,8 +115,8 @@
 				height: diameter,
 				left: mouseX - diameter/2,
 				top : mouseY - diameter,
-				vy: Math.pow(-1,getIntegerRandom(1000))*(Math.random()*20+2),
-				vx : Math.pow(-1,getIntegerRandom(1000))* (Math.random()*15 + 2) ,
+				vy: Math.pow(-1,getIntegerRandom(1000))*(Math.random()*20),
+				vx : Math.pow(-1,getIntegerRandom(1000))* (Math.random()*15),
 				g: Math.random() + 0.5,
 				color: colors[getIntegerRandom(colors.length)]
 			}
